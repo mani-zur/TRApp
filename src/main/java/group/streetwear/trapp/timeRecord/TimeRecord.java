@@ -1,12 +1,15 @@
-package group.streetwear.trapp.model;
+package group.streetwear.trapp.timeRecord;
 
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="WORK_LOG")
-public class WorkLog {
+@Table(name="TIME_RECORDS")
+public class TimeRecord {
 
     @Id
     @GeneratedValue
@@ -20,7 +23,13 @@ public class WorkLog {
 
     @Column( name = "WORK_END_TIME", nullable = false)
     private LocalDateTime workEndTime;
-    public WorkLog() {
+
+    @CreationTimestamp
+    private LocalDateTime createDateTime;
+
+    @UpdateTimestamp
+    private LocalDateTime updateDateTime;
+    public TimeRecord() {
     }
 
     public Long getId() {

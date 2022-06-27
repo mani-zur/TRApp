@@ -1,0 +1,58 @@
+<html>
+<head th:replace="index.html :: head"></head>
+<body>
+<header th:replace="index.html :: header"></header>
+<navigation th:replace="index.html :: navigation"></navigation>
+<div class="content container my-3 d-flex justify-content-center">
+    <div class="btn-group" role="group">
+        <a role="button"
+           class="btn btn-primary" id="previousMonth">
+            Previous
+        </a>
+        <a role="button" class="btn btn-primary disabled" id="currentMonth">
+            MONTH
+        </a>
+        <a role="button"
+           class="btn btn-primary" id="nextMonth">
+            Next
+        </a>
+    </div>
+</div>
+<div class="container rounded bg-white py-3 text-center">
+    <tr th:each="timeRecord: ${timeRecords}">
+        <div class="row">
+            <div class="col">
+                <td th:text="${timeRecord.date}"/>
+            </div>
+            <div class="col">
+                <td th:text="${timeRecord.start}"/>
+            </div>
+            <div class="col">
+                <td th:text="${timeRecord.end}"/>
+            </div>
+            <div class="col">
+                <span class="badge rounded-pill bg-primary" ><td th:text="${#conversions.convert(timeRecord.workTime, 'String')}"/></span>
+            </div>
+        </div>
+    </tr>
+</div>
+</div>
+<footer th:replace="index.html :: footer"></footer>
+<script th:inline="javascript">
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+
+    var month = new Date([[${month}]]);
+
+    var previousMonth = new Date(month);
+    previousMonth.setMonth(previousMonth.getMonth() - 1);
+    var nextMonth = new Date(month);
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+    document.getElementById("nextMonth").href="/calendar/" + nextMonth.getFullYear() + "/" + (nextMonth.getMonth() + 1);
+    document.getElementById("previousMonth").href="/calendar/" + previousMonth.getFullYear() + "/" + (previousMonth.getMonth() + 1);
+    document.getElementById("currentMonth").innerHTML = monthNames[month.getMonth()];
+</script>
+</body>
+</html>

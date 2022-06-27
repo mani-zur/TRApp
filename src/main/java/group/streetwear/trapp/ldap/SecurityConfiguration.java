@@ -1,24 +1,22 @@
 package group.streetwear.trapp.ldap;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.ldap.core.support.LdapContextSource;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.ldap.LdapBindAuthenticationManagerFactory;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
-import org.springframework.security.ldap.userdetails.PersonContextMapper;
 import org.springframework.security.web.SecurityFilterChain;
 
 
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
+                .antMatchers("/h2-console/*").hasAuthority(Authority.ADMIN)
                 .anyRequest()
-                .fullyAuthenticated()
+                .hasAnyAuthority(Authority.USER, Authority.ADMIN)
                 .and()
                 .formLogin()
                 .passwordParameter("userPassword");
@@ -32,7 +30,6 @@ public class SecurityConfiguration {
         httpSecurity.headers().frameOptions().disable();
         return httpSecurity.build();
     }
-
 
     @Bean
     ActiveDirectoryLdapAuthenticationProvider authenticationProvider() {
