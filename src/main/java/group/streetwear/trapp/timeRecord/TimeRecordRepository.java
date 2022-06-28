@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface TimeRecordRepository extends CrudRepository<TimeRecord, Long> {
 
+    public TimeRecord findOneByWorkStartTimeGreaterThanAndWorkStartTimeLessThanAndUsername(LocalDateTime startDate, LocalDateTime endDate, String username);
+
     public List<TimeRecord> findByUsername(String username);
 
     @Query(value = "from TimeRecord w where w.workStartTime BETWEEN :startDate AND :endDate")

@@ -4,40 +4,37 @@
     <header th:replace="index.html :: header"></header>
     <navigation th:replace="index.html :: navigation" ></navigation>
     <div class="content container">
-        <form th:action="@{/reportTime}" th:object="${timeRecord}" method="post">
+        <form method="post" th:action="@{/reportTime}" th:object="${timeRecord}">
             <div class="row">
                 <div class="col">
                     <div class="form-floating mb-3">
-                        <input type="date" class="form-control"
-                               th:classappend="${#fields.hasErrors('date') ? 'is-invalid' : ''}" id="dateInput"
-                               placeholder="07:00" th:field="*{date}">
+                        <input class="form-control" id="dateInput"
+                               placeholder="07:00" th:classappend="${#fields.hasErrors('date') ? 'is-invalid' : ''}"
+                               th:field="*{date}" type="date">
                         <label for="dateInput">Date</label>
-                        <div class="invalid-feedback" th:if="${#fields.hasErrors('date')}">This field can't be empty!
-                        </div>
+                        <div class="invalid-feedback" th:errors="*{date}" th:if="${#fields.hasErrors('date')}"></div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-floating mb-3">
-                        <input type="time" class="form-control"
-                               th:classappend="${#fields.hasErrors('start') ? 'is-invalid' : ''}" id="startTimeInput"
-                               value="07:00" th:field="*{start}">
+                        <input class="form-control" id="startTimeInput"
+                               th:classappend="${#fields.hasErrors('start') ? 'is-invalid' : ''}" th:field="*{start}"
+                               type="time" value="07:00">
                         <label for="startTimeInput">Start time</label>
-                        <div class="invalid-feedback" th:if="${#fields.hasErrors('start')}">This field can't be empty!
-                        </div>
+                        <div class="invalid-feedback" th:errors="*{start}" th:if="${#fields.hasErrors('start')}"></div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-floating mb-3">
-                        <input type="time" class="form-control"
-                               th:classappend="${#fields.hasErrors('end') ? 'is-invalid' : ''}" id="endTimeInput"
-                               value="15:00" th:field="*{end}">
+                        <input class="form-control" id="endTimeInput"
+                               th:classappend="${#fields.hasErrors('end') ? 'is-invalid' : ''}" th:field="*{end}"
+                               type="time" value="15:00">
                         <label for="endTimeInput">End time</label>
-                        <div class="invalid-feedback" th:if="${#fields.hasErrors('end')}">This field can't be empty!
-                        </div>
+                        <div class="invalid-feedback" th:errors="*{start}" th:if="${#fields.hasErrors('end')}"></div>
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Report</button>
+            <button class="btn btn-primary" type="submit">Report</button>
         </form>
     </div>
     <footer th:replace="index.html :: footer"></footer>

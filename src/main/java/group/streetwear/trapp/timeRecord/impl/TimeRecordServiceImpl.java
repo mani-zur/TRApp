@@ -14,6 +14,8 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
+
 @Service
 public class TimeRecordServiceImpl implements TimeRecordService {
 
@@ -30,12 +32,11 @@ public class TimeRecordServiceImpl implements TimeRecordService {
     }
 
     private static TimeRecordDto parseTimeRecordDto(TimeRecord record) {
-        TimeRecordDto timeRecordDto = new TimeRecordDto(
+        return new TimeRecordDto(
                 record.getWorkStartTime().toLocalDate(),
                 record.getWorkStartTime().toLocalTime(),
                 record.getWorkEndTime().toLocalTime()
         );
-        return timeRecordDto;
     }
 
     public List<TimeRecordDto> getAllForUser(String username) {
@@ -50,15 +51,21 @@ public class TimeRecordServiceImpl implements TimeRecordService {
         return workTimes.stream().map(TimeRecordServiceImpl::parseTimeRecordDto).collect(Collectors.toList());
     }
 
-    public List<TimeRecordDto> getAllForUserBetweenDates(String username, LocalDate from, LocalDate to) {
-        List<TimeRecord> workTimes = this.timeRecordRepository.findAllBetweenDatesByUsername(
-                from.atStartOfDay(), to.plusDays(1).atStartOfDay(), username);
-        return workTimes.stream().map(TimeRecordServiceImpl::parseTimeRecordDto).collect(Collectors.toList());
-    }
-
     public void saveSingleRecord(TimeRecordDto timeRecordDto, String username) {
-        TimeRecord timeRecordToSave = parseTimeRecord(timeRecordDto);
-        timeRecordToSave.setUsername(username);
+        TimeRecord timeRecordToSave = timeRecordRepository.findOneByWorkStartTimeGreaterThanAndWorkStartTimeLessThanAndUsername(
+                timeRecordDto.getDate().atStartOfDay(), timeRecordDto.getDate().atTime(LocalTime.MAX), username
+        );
+
+        if (isNull(timeRecordToSave)) {
+            timeRecordToSave = new TimeRecord();
+            timeRecordToSave.setUsername(username);
+        }
+
+        LocalDateTime startTime = timeRecordDto.getStart().atDate(timeRecordDto.getDate());
+        LocalDateTime endTime = timeRecordDto.getEnd().atDate(timeRecordDto.getDate());
+        timeRecordToSave.setWorkStartTime(startTime);
+        timeRecordToSave.setWorkEndTime(endTime);
+
         this.timeRecordRepository.save(timeRecordToSave);
     }
 }

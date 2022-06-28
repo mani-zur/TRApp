@@ -7,25 +7,29 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import static java.util.Objects.nonNull;
+
 public class TimeRecordDto {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull
+    @NotNull(message = "This field can't be empty!")
     private LocalDate date;
     @DateTimeFormat(pattern = "HH:mm")
-    @NotNull
+    @NotNull(message = "This field can't be empty!")
     private LocalTime start;
     @DateTimeFormat(pattern = "HH:mm")
-    @NotNull
+    @NotNull(message = "This field can't be empty!")
     private LocalTime end;
 
     private Duration workTime;
 
-    public TimeRecordDto(LocalDate date, LocalTime start, LocalTime end){
+    public TimeRecordDto(LocalDate date, LocalTime start, LocalTime end) {
         this.date = date;
         this.start = start;
         this.end = end;
-        this.workTime = Duration.between(start, end);
+        if (nonNull(start) && nonNull(end)) {
+            this.workTime = Duration.between(start, end);
+        }
     }
 
 
