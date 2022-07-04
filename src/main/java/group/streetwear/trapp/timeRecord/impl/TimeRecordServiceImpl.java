@@ -33,6 +33,7 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 
     private static TimeRecordDto parseTimeRecordDto(TimeRecord record) {
         return new TimeRecordDto(
+                record.getId(),
                 record.getWorkStartTime().toLocalDate(),
                 record.getWorkStartTime().toLocalTime(),
                 record.getWorkEndTime().toLocalTime()

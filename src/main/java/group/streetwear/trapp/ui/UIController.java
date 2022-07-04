@@ -4,6 +4,7 @@ import group.streetwear.trapp.ldap.Authority;
 import group.streetwear.trapp.monthReport.MonthReport;
 import group.streetwear.trapp.monthReport.MonthReportService;
 import group.streetwear.trapp.timeRecord.TimeRecordDto;
+import group.streetwear.trapp.timeRecord.TimeRecordRepository;
 import group.streetwear.trapp.timeRecord.TimeRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,10 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
@@ -30,6 +28,9 @@ public class UIController {
     TimeRecordService timeRecordService;
 
     @Autowired
+    TimeRecordRepository timeRecordRepository;
+
+    @Autowired
     MonthReportService monthReportService;
 
     @GetMapping("/")
@@ -42,7 +43,7 @@ public class UIController {
     public String reportTimeForm(Model model, Authentication authentication) {
         model.addAttribute("username", authentication.getName());
         model.addAttribute("timeRecord",
-                new TimeRecordDto(LocalDate.now(), LocalTime.of(07,00), LocalTime.of(15, 00))
+                new TimeRecordDto(null, LocalDate.now(), LocalTime.of(07,00), LocalTime.of(15, 00))
         );
         return "reportTime";
     }
@@ -103,6 +104,13 @@ public class UIController {
         model.addAttribute("month", requestedMonth);
         model.addAttribute("username", authentication.getName());
 
+        return "employerPanel";
+    }
+
+    @GetMapping("/deleteRecord")
+    @PreAuthorize("hasAuthority('" + Authority.ADMIN + "')")
+    public String deleteEmployee(@RequestParam Long recordId) {
+        timeRecordRepository.deleteById(recordId);
         return "employerPanel";
     }
 }

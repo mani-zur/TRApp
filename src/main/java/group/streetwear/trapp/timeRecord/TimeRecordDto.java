@@ -11,6 +11,8 @@ import static java.util.Objects.nonNull;
 
 public class TimeRecordDto {
 
+    private Long id;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "This field can't be empty!")
     private LocalDate date;
@@ -23,7 +25,8 @@ public class TimeRecordDto {
 
     private Duration workTime;
 
-    public TimeRecordDto(LocalDate date, LocalTime start, LocalTime end) {
+    public TimeRecordDto(Long id, LocalDate date, LocalTime start, LocalTime end) {
+        this.id = id;
         this.date = date;
         this.start = start;
         this.end = end;
@@ -47,5 +50,9 @@ public class TimeRecordDto {
 
     public Duration getWorkTime() {
         return workTime;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

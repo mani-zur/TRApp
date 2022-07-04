@@ -44,6 +44,9 @@
                         <div class="col">
                             <span class="badge rounded-pill bg-primary" ><td th:text="${#conversions.convert(timeRecord.workTime, 'String')}"/></span>
                         </div>
+                        <div class="col">
+                            <a class="badge btn btn-danger ml-2" th:href="@{/deleteRecord(recordId=${timeRecord.id})}">Delete</a>
+                        </div>
                     </div>
                 </tr>
             </div>
