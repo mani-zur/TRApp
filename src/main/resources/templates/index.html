@@ -21,9 +21,13 @@
                 <li>
                     <a class="nav-link" href="/calendar">Calendar</a>
                 </li>
+                <li sec:authorize="hasAuthority(T(group.streetwear.trapp.ldap.Authority).ADMIN)">
+                    <a class="nav-link" href="/employerPanel">Employer panel</a>
+                </li>
             </ul>
-            <a class="btn btn-primary" href="/logout" role="button" title="Logout"> <td th:text="${username}"/> <i
-                    class="bi bi-arrow-right-short"></i></a>
+            <a class="btn btn-primary" href="/logout" role="button" title="Logout">
+                <td th:text="${username}"/>
+                <i class="bi bi-arrow-right-short"></i></a>
         </div>
     </nav>
 </div>

@@ -1,0 +1,53 @@
+<html>
+<head th:replace="index.html :: head"></head>
+<body>
+<header th:replace="index.html :: header"></header>
+<navigation th:replace="index.html :: navigation" ></navigation>
+
+<div class="content container my-3 d-flex justify-content-center">
+    <div class="btn-group" role="group">
+        <a class="btn btn-primary"
+           id="previousMonth" role="button">
+            Previous
+        </a>
+        <a class="btn btn-primary disabled" id="currentMonth" role="button">
+            MONTH
+        </a>
+        <a class="btn btn-primary"
+           id="nextMonth" role="button">
+            Next
+        </a>
+    </div>
+</div>
+
+<div class="container rounded bg-white py-3 text-center">
+    <tr th:each="report: ${reports}">
+        <div class="row">
+            <div class="col">
+                <td th:text="${report.username}"/>
+            </div>
+            <div class="col">
+                <td th:text="${#conversions.convert(report.getWorkTimeSum(), 'String')}"/>
+            </div>
+        </div>
+    </tr>
+</div>
+<footer th:replace="index.html :: footer"></footer>
+<script th:inline="javascript">
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+
+    var month = new Date([[${month}]]);
+
+    var previousMonth = new Date(month);
+    previousMonth.setMonth(previousMonth.getMonth() - 1);
+    var nextMonth = new Date(month);
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+    document.getElementById("nextMonth").href="/employerPanel/" + nextMonth.getFullYear() + "/" + (nextMonth.getMonth() + 1);
+    document.getElementById("previousMonth").href="/employerPanel/" + previousMonth.getFullYear() + "/" + (previousMonth.getMonth() + 1);
+    document.getElementById("currentMonth").innerHTML = monthNames[month.getMonth()];
+</script>
+</body>
+</html>

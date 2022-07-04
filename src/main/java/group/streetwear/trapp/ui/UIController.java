@@ -1,6 +1,8 @@
 package group.streetwear.trapp.ui;
 
 import group.streetwear.trapp.ldap.Authority;
+import group.streetwear.trapp.monthReport.MonthReport;
+import group.streetwear.trapp.monthReport.MonthReportService;
 import group.streetwear.trapp.timeRecord.TimeRecordDto;
 import group.streetwear.trapp.timeRecord.TimeRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +11,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
@@ -23,6 +28,9 @@ public class UIController {
 
     @Autowired
     TimeRecordService timeRecordService;
+
+    @Autowired
+    MonthReportService monthReportService;
 
     @GetMapping("/")
     public String showUserList(Model model, Authentication authentication) {
@@ -75,10 +83,26 @@ public class UIController {
         return "calendar";
     }
 
-    @GetMapping("/admins")
-    @ResponseBody
+    @GetMapping( value = {"/employerPanel","/employerPanel/{year}/{month}"})
     @PreAuthorize("hasAuthority('" + Authority.ADMIN + "')")
-    public String admins(Authentication authentication) {
-        return authentication.toString();
+    public String admins(Model model,
+                         @PathVariable(required = false) Integer year,
+                         @PathVariable(required = false) @Min(1) @Max(12) Integer month,
+                         Authentication authentication) {
+        LocalDate requestedMonth = LocalDate.now();
+
+        if (year != null && month != null) {
+            requestedMonth = LocalDate.ofYearDay(year, 1).withMonth(month);
+        }
+
+
+
+        List<MonthReport> reportsList = this.monthReportService.getAllMonthReport(requestedMonth);
+
+        model.addAttribute("reports", reportsList);
+        model.addAttribute("month", requestedMonth);
+        model.addAttribute("username", authentication.getName());
+
+        return "employerPanel";
     }
 }
