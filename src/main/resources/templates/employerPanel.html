@@ -20,18 +20,37 @@
     </div>
 </div>
 
-<div class="container rounded bg-white py-3 text-center">
-    <tr th:each="report: ${reports}">
-        <div class="row">
-            <div class="col">
-                <td th:text="${report.username}"/>
-            </div>
-            <div class="col">
-                <td th:text="${#conversions.convert(report.getWorkTimeSum(), 'String')}"/>
+<div class="accordion accordion container py-3" id="accordionFlushExample">
+    <div class="accordion-item" th:each="report, i: ${reports}">
+        <h2 class="accordion-header" th:id="'heading_' + ${i.index}">
+            <button aria-expanded="false" class="accordion-button collapsed" data-bs-toggle="collapse"
+                    th:attr="aria-controls='collapse_' + ${i.index}, data-bs-target='collapse_' + ${i.index}, data-bs-target='#collapse_' + ${i.index}"
+                    th:text="${report.username} + ' - ' + ${#conversions.convert(report.getWorkTimeSum(), 'String')}" type="button">
+            </button>
+        </h2>
+        <div class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample" th:attr="aria-labelledby='heading_' + ${i.index}" th:id="'collapse_' + ${i.index}">
+            <div class="accordion-body">
+                <tr th:each="timeRecord: ${report.timeRecords}">
+                    <div class="row">
+                        <div class="col">
+                            <td th:text="${timeRecord.date}"/>
+                        </div>
+                        <div class="col">
+                            <td th:text="${timeRecord.start}"/>
+                        </div>
+                        <div class="col">
+                            <td th:text="${timeRecord.end}"/>
+                        </div>
+                        <div class="col">
+                            <span class="badge rounded-pill bg-primary" ><td th:text="${#conversions.convert(timeRecord.workTime, 'String')}"/></span>
+                        </div>
+                    </div>
+                </tr>
             </div>
         </div>
-    </tr>
+    </div>
 </div>
+
 <footer th:replace="index.html :: footer"></footer>
 <script th:inline="javascript">
     const monthNames = ["January", "February", "March", "April", "May", "June",
@@ -49,5 +68,6 @@
     document.getElementById("previousMonth").href="/employerPanel/" + previousMonth.getFullYear() + "/" + (previousMonth.getMonth() + 1);
     document.getElementById("currentMonth").innerHTML = monthNames[month.getMonth()];
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
