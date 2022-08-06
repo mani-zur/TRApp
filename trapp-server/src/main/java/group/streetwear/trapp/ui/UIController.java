@@ -3,6 +3,7 @@ package group.streetwear.trapp.ui;
 import group.streetwear.trapp.ldap.Authority;
 import group.streetwear.trapp.monthReport.MonthReport;
 import group.streetwear.trapp.monthReport.MonthReportService;
+import group.streetwear.trapp.repository.UserRepository;
 import group.streetwear.trapp.timeRecord.TimeRecordDto;
 import group.streetwear.trapp.timeRecord.TimeRecordRepository;
 import group.streetwear.trapp.timeRecord.TimeRecordService;
@@ -33,6 +34,9 @@ public class UIController {
     @Autowired
     MonthReportService monthReportService;
 
+    @Autowired
+    UserRepository userRepository;
+
     @GetMapping("/")
     public String showUserList(Model model, Authentication authentication) {
         model.addAttribute("username", authentication.getName());
@@ -41,7 +45,7 @@ public class UIController {
 
     @GetMapping("/reportTime")
     public String reportTimeForm(Model model, Authentication authentication) {
-        model.addAttribute("username", authentication.getName());
+        model.addAttribute("username", authentication.getDetails());
         model.addAttribute("timeRecord",
                 new TimeRecordDto(null, LocalDate.now(), LocalTime.of(07,00), LocalTime.of(15, 00))
         );
@@ -53,7 +57,6 @@ public class UIController {
                                   BindingResult bindingResult,
                                   Model model,
                                   Authentication authentication) {
-
         if (bindingResult.hasErrors()) {
             return "reportTime";
         }

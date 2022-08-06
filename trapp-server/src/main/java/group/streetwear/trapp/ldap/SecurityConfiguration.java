@@ -1,5 +1,7 @@
 package group.streetwear.trapp.ldap;
 
+import group.streetwear.trapp.repository.ActiveDirectoryUserMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -11,6 +13,10 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
+
+    @Autowired
+    ActiveDirectoryUserMapper activeDirectoryUserMapper;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
@@ -33,6 +39,9 @@ public class SecurityConfiguration {
 
     @Bean
     ActiveDirectoryLdapAuthenticationProvider authenticationProvider() {
-        return new ActiveDirectoryLdapAuthenticationProvider("swg.local", "ldap://10.0.40.23/");
+        ActiveDirectoryLdapAuthenticationProvider authenticationProvider =
+                new ActiveDirectoryLdapAuthenticationProvider("swg.local", "ldap://10.0.40.23/", "DC=swg,DC=local");
+        authenticationProvider.setUserDetailsContextMapper(activeDirectoryUserMapper);
+        return authenticationProvider;
     }
 }
