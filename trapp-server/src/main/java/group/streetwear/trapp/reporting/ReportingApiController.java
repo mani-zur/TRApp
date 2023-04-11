@@ -29,11 +29,6 @@ public class ReportingApiController {
         return result;
     }
 
-    @GetMapping(value = "/user/{username}", produces = "application/json")
-    public @ResponseBody List<TimeRecord> getAllWorkLogsForUser(@PathVariable String username) {
-        return timeRecordRepository.findByUsername(username);
-    }
-
     @GetMapping(value = "/between/{startDate}/{endDate}", produces = "application/json")
     public @ResponseBody List<TimeRecord> getAllBetweenDate(@PathVariable String startDate, @PathVariable String endDate) {
         return timeRecordRepository.findAllBetweenDates(LocalDateTime.parse(startDate), LocalDateTime.parse(endDate));

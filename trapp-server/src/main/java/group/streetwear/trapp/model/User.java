@@ -14,14 +14,17 @@ public class User {
     @GeneratedValue
     private Long Id;
 
-    @Column(name = "AD_GUID", nullable = false)
-    private String activeDirectoryGUID;
+    @Column(name = "USERNAME", nullable = false, unique = true)
+    private String username;
 
     @Column(name = "SALARY")
     private Float salary;
 
     @Column(name = "EMPLOYMENT_DATE")
     private LocalDate employmentDate;
+
+    @Column(name = "RETARD_DATE")
+    private LocalDate retardDate;
 
     @Column(name = "FIRST_NAME")
     private String firstName;
@@ -35,14 +38,6 @@ public class User {
 
     @UpdateTimestamp
     private LocalDateTime updateDateTime;
-
-    public String getActiveDirectoryGUID() {
-        return activeDirectoryGUID;
-    }
-
-    public void setActiveDirectoryGUID(String activeDirectoryGUID) {
-        this.activeDirectoryGUID = activeDirectoryGUID;
-    }
 
     public Float getSalary() {
         return salary;
@@ -78,5 +73,13 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

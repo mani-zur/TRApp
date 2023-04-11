@@ -1,6 +1,7 @@
 package group.streetwear.trapp.timeRecord;
 
 
+import group.streetwear.trapp.model.User;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -15,8 +16,9 @@ public class TimeRecord {
     @GeneratedValue
     private Long Id;
 
-    @Column( name = "USERNAME", nullable = false)
-    private String username;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID", updatable = false)
+    private User user;
 
     @Column( name = "WORK_START_TIME", nullable = false)
     private LocalDateTime workStartTime;
@@ -36,12 +38,12 @@ public class TimeRecord {
         return Id;
     }
 
-    public String getUsername() {
-        return username;
+    public User getUser() {
+        return user;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public LocalDateTime getWorkStartTime() {

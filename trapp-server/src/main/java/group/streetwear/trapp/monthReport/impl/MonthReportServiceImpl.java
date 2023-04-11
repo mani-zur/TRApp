@@ -1,5 +1,6 @@
 package group.streetwear.trapp.monthReport.impl;
 
+import group.streetwear.trapp.model.User;
 import group.streetwear.trapp.monthReport.MonthReport;
 import group.streetwear.trapp.monthReport.MonthReportService;
 import group.streetwear.trapp.timeRecord.TimeRecord;
@@ -39,13 +40,12 @@ public class MonthReportServiceImpl implements MonthReportService {
         LocalDateTime monthEnd = month.with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX);
         List<TimeRecord> workTimes = this.timeRecordRepository.findAllBetweenDates(monthBegin, monthEnd);
 
-        Map<String, List<TimeRecord>> groupedRecords = workTimes.stream().collect(groupingBy(TimeRecord::getUsername, Collectors.toList()));
-
+        Map<User, List<TimeRecord>> groupedRecords = workTimes.stream().collect(groupingBy(TimeRecord::getUser, Collectors.toList()));
 
         List<MonthReport> reports = new ArrayList<>();
-        groupedRecords.forEach((username, reportedTime) -> {
+        groupedRecords.forEach((user, reportedTime) -> {
             List<TimeRecordDto> dtos = reportedTime.stream().map(MonthReportServiceImpl::parseTimeRecordDto).collect(Collectors.toList());
-            reports.add(new MonthReport(username, dtos));
+            reports.add(new MonthReport(user.getFirstName(), dtos));
         });
 
         return reports;

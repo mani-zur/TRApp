@@ -1,5 +1,6 @@
 package group.streetwear.trapp.timeRecord.impl;
 
+import group.streetwear.trapp.model.User;
 import group.streetwear.trapp.timeRecord.TimeRecord;
 import group.streetwear.trapp.timeRecord.TimeRecordDto;
 import group.streetwear.trapp.timeRecord.TimeRecordRepository;
@@ -40,26 +41,26 @@ public class TimeRecordServiceImpl implements TimeRecordService {
         );
     }
 
-    public List<TimeRecordDto> getAllForUser(String username) {
-        List<TimeRecord> workTimes = this.timeRecordRepository.findByUsername(username);
+    public List<TimeRecordDto> getAllForUser(User user) {
+        List<TimeRecord> workTimes = this.timeRecordRepository.findByUser(user);
         return workTimes.stream().map(TimeRecordServiceImpl::parseTimeRecordDto).collect(Collectors.toList());
     }
 
-    public List<TimeRecordDto> getAllForUserInMonth(String username, LocalDate month) {
+    public List<TimeRecordDto> getAllForUserInMonth(User user, LocalDate month) {
         LocalDateTime monthBegin = month.with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay();
         LocalDateTime monthEnd = month.with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX);
-        List<TimeRecord> workTimes = this.timeRecordRepository.findAllBetweenDatesByUsername(monthBegin, monthEnd, username);
+        List<TimeRecord> workTimes = this.timeRecordRepository.findAllBetweenDatesByUser(monthBegin, monthEnd, user);
         return workTimes.stream().map(TimeRecordServiceImpl::parseTimeRecordDto).collect(Collectors.toList());
     }
 
-    public void saveSingleRecord(TimeRecordDto timeRecordDto, String username) {
-        TimeRecord timeRecordToSave = timeRecordRepository.findOneByWorkStartTimeGreaterThanAndWorkStartTimeLessThanAndUsername(
-                timeRecordDto.getDate().atStartOfDay(), timeRecordDto.getDate().atTime(LocalTime.MAX), username
+    public void saveSingleRecord(TimeRecordDto timeRecordDto, User user) {
+        TimeRecord timeRecordToSave = timeRecordRepository.findOneByWorkStartTimeGreaterThanAndWorkStartTimeLessThanAndUser(
+                timeRecordDto.getDate().atStartOfDay(), timeRecordDto.getDate().atTime(LocalTime.MAX), user
         );
 
         if (isNull(timeRecordToSave)) {
             timeRecordToSave = new TimeRecord();
-            timeRecordToSave.setUsername(username);
+            timeRecordToSave.setUser(user);
         }
 
         LocalDateTime startTime = timeRecordDto.getStart().atDate(timeRecordDto.getDate());

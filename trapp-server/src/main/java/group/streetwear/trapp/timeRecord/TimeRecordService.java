@@ -1,14 +1,16 @@
 package group.streetwear.trapp.timeRecord;
 
+import group.streetwear.trapp.model.User;
+
 import java.time.LocalDate;
 import java.util.List;
 
 public interface TimeRecordService {
 
-    List<TimeRecordDto> getAllForUser(String username);
+    List<TimeRecordDto> getAllForUser(User user);
 
-    List<TimeRecordDto> getAllForUserInMonth(String username, LocalDate month);
+    List<TimeRecordDto> getAllForUserInMonth(User user, LocalDate month);
 
-    void saveSingleRecord(TimeRecordDto recordDto, String username);
+    void saveSingleRecord(TimeRecordDto recordDto, User user);
 
 }

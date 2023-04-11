@@ -1,9 +1,9 @@
 package group.streetwear.trapp.ui;
 
+import group.streetwear.trapp.ldap.ActiveDirectoryUserDetails;
 import group.streetwear.trapp.ldap.Authority;
 import group.streetwear.trapp.monthReport.MonthReport;
 import group.streetwear.trapp.monthReport.MonthReportService;
-import group.streetwear.trapp.repository.UserRepository;
 import group.streetwear.trapp.timeRecord.TimeRecordDto;
 import group.streetwear.trapp.timeRecord.TimeRecordRepository;
 import group.streetwear.trapp.timeRecord.TimeRecordService;
@@ -24,28 +24,24 @@ import java.util.List;
 
 @Controller
 public class UIController {
-
     @Autowired
     TimeRecordService timeRecordService;
-
     @Autowired
     TimeRecordRepository timeRecordRepository;
-
     @Autowired
     MonthReportService monthReportService;
 
-    @Autowired
-    UserRepository userRepository;
-
     @GetMapping("/")
     public String showUserList(Model model, Authentication authentication) {
-        model.addAttribute("username", authentication.getName());
+        ActiveDirectoryUserDetails user = (ActiveDirectoryUserDetails) authentication.getPrincipal();
+        model.addAttribute("username", user.getUsername());
         return "index";
     }
 
     @GetMapping("/reportTime")
     public String reportTimeForm(Model model, Authentication authentication) {
-        model.addAttribute("username", authentication.getDetails());
+        ActiveDirectoryUserDetails user = (ActiveDirectoryUserDetails) authentication.getPrincipal();
+        model.addAttribute("username", user.getUsername());
         model.addAttribute("timeRecord",
                 new TimeRecordDto(null, LocalDate.now(), LocalTime.of(07,00), LocalTime.of(15, 00))
         );
@@ -61,8 +57,10 @@ public class UIController {
             return "reportTime";
         }
 
-        model.addAttribute("username", authentication.getName());
-        this.timeRecordService.saveSingleRecord(timeRecordDto, authentication.getName());
+        ActiveDirectoryUserDetails user = (ActiveDirectoryUserDetails) authentication.getPrincipal();
+
+        model.addAttribute("username", user.getUsername());
+        this.timeRecordService.saveSingleRecord(timeRecordDto, user.getUser());
         return "redirect:calendar";
     }
 
@@ -72,17 +70,18 @@ public class UIController {
                               @PathVariable(required = false) @Min(1) @Max(12) Integer month,
                               Authentication authentication
     ) {
+        ActiveDirectoryUserDetails user = (ActiveDirectoryUserDetails) authentication.getPrincipal();
         LocalDate requestedMonth = LocalDate.now();
 
         if (year != null && month != null) {
             requestedMonth = LocalDate.ofYearDay(year, 1).withMonth(month);
         }
 
-        List<TimeRecordDto> timeRecordDtos = timeRecordService.getAllForUserInMonth(authentication.getName(), requestedMonth);
+        List<TimeRecordDto> timeRecordDtos = timeRecordService.getAllForUserInMonth(user.getUser(), requestedMonth);
 
         model.addAttribute("timeRecords", timeRecordDtos);
         model.addAttribute("month", requestedMonth);
-        model.addAttribute("username", authentication.getName());
+        model.addAttribute("username", user.getUsername());
 
         return "calendar";
     }
@@ -94,6 +93,7 @@ public class UIController {
                          @PathVariable(required = false) @Min(1) @Max(12) Integer month,
                          Authentication authentication) {
         LocalDate requestedMonth = LocalDate.now();
+        ActiveDirectoryUserDetails user = (ActiveDirectoryUserDetails) authentication.getPrincipal();
 
         if (year != null && month != null) {
             requestedMonth = LocalDate.ofYearDay(year, 1).withMonth(month);
@@ -105,7 +105,7 @@ public class UIController {
 
         model.addAttribute("reports", reportsList);
         model.addAttribute("month", requestedMonth);
-        model.addAttribute("username", authentication.getName());
+        model.addAttribute("username", user.getUsername());
 
         return "employerPanel";
     }

@@ -21,20 +21,16 @@ public class ActiveDirectoryUserMapper extends LdapUserDetailsMapper {
     public UserDetails mapUserFromContext(DirContextOperations dirContextOperations, String s, Collection<? extends GrantedAuthority> collection) {
         UserDetails details = super.mapUserFromContext(dirContextOperations, s, collection);
 
-        String GUID = dirContextOperations.getStringAttribute("objectGUID");
-
-        User user = userRepository.findByActiveDirectoryGUID(GUID);
-        if (user == null) {
-            User newUser = new User();
-            newUser.setActiveDirectoryGUID(GUID);
-            newUser.setFirstName(dirContextOperations.getStringAttribute("givenname"));
-            newUser.setLastName(dirContextOperations.getStringAttribute("sn"));
-            user = userRepository.save(newUser);
-        }
+        User userPrototype = new User();
+        userPrototype.setUsername(dirContextOperations.getStringAttribute("sAMAccountName"));
+        userPrototype.setFirstName(dirContextOperations.getStringAttribute("givenname"));
+        userPrototype.setLastName(dirContextOperations.getStringAttribute("sn"));
+        User user = userRepository.findByUsername(userPrototype.getUsername())
+                .orElseGet(() -> userRepository.save(userPrototype));
 
         ActiveDirectoryUserDetails userDetails = new ActiveDirectoryUserDetails(details.getUsername(), "[PROTECTED]",
                 details.isEnabled(), details.isAccountNonExpired(), details.isCredentialsNonExpired(),
-                details.isAccountNonLocked(), details.getAuthorities(), user.getActiveDirectoryGUID(), user.getId());
+                details.isAccountNonLocked(), details.getAuthorities(), user);
 
         return userDetails;
     }
